@@ -26,25 +26,25 @@ namespace ExchangeRate.Services
         {
             var response = new Response<InputResponseModel>();
 
-            var httpResponse = await _client.GetAsync(request);
-
-            if (httpResponse.StatusCode == HttpStatusCode.OK)
+            try
             {
-                try
-                {
-                    response.Value = await httpResponse.Content.ReadAsAsync<InputResponseModel>();
+                var httpResponse = await _client.GetAsync(request);
 
-                    response.Succeeded = true;
-                }
-                catch (Exception ex)
+                if (httpResponse.StatusCode == HttpStatusCode.OK)
                 {
-                    response.Message = ex.Message;
+                        response.Value = await httpResponse.Content.ReadAsAsync<InputResponseModel>();
+
+                        response.Succeeded = true;
+                }
+                else
+                {
+                    response.Message = httpResponse.StatusCode.ToString();
                     response.Succeeded = false;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                response.Message = httpResponse.StatusCode.ToString();
+                response.Message = ex.Message;
                 response.Succeeded = false;
             }
 
